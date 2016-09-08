@@ -1,0 +1,23 @@
+{
+  "name": "node-talkiepi",
+  "version": "1.0.0",
+  "description": "node-base mumble client for a rasbperry pi",
+  "main": "index.js",
+  "dependencies": {
+    "mumble": "^0.3.10",
+    "onoff": "^1.1.1"
+  },
+  "devDependencies": {
+    "mocha": "^3.0.2",
+    "mocha-clean": "^1.0.0"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "mocha test/index.js"
+  },
+  "engines": {
+    "node": ">=4.2 <4.5"
+  },
+  "author": "Matt Ross <amsross@gmail.com>",
+  "license": "ISC"
+}
