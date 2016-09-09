@@ -4,6 +4,8 @@
   "description": "node-base mumble client for a rasbperry pi",
   "main": "index.js",
   "dependencies": {
+    "highland": "^3.0.0-beta.3",
+    "mic": "^2.1.1",
     "mumble": "^0.3.10",
     "onoff": "^1.1.1"
   },
@@ -14,9 +16,6 @@
   "scripts": {
     "start": "node index.js",
     "test": "mocha test/index.js"
-  },
-  "engines": {
-    "node": ">=4.2 <4.5"
   },
   "author": "Matt Ross <amsross@gmail.com>",
   "license": "ISC"
