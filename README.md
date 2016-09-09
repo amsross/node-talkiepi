@@ -19,10 +19,13 @@
 
         sudo useradd talkiepi
         // sudo is required for installing raspi-io
-        sudo useradd -G sudo talkiepi
+        sudo useradd -G sudo -m -s /bin/bash talkiepi
+        sudo su - talkiepi
 
 2. Setup node-talkiepi
 
+        git clone https://github.com/amsross/node-talkiepi.git /home/talkiepi/
+        cd /home/talkiepi
         // you'll be asked to authenticate for sudo
         //  this is required for raspi-io
         npm install
