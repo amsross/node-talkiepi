@@ -1,3 +1,4 @@
+const _ = require("lodash");
 const h = require("highland");
 const mumble = require("mumble");
 const mic = require("mic");
@@ -5,8 +6,8 @@ const micInstance = mic({ "rate": "16000", "channels": "1", "debug": false, "exi
 const micInputStream = micInstance.getAudioStream();
 
 // Is the mic recording?
-//  1 = yes
-//  0 = no
+//  true = yes
+//  false = no
 var micInstanceStatus;
 
 // attempt to connect to mumble
