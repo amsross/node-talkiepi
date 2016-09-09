@@ -11,25 +11,25 @@
 
 1. Setup system requirements
 
-    sudo apt-get update
-    sudo apt-get upgrade
-    sudo apt-get install git build-essentials alsa-base alsa-utils
+        sudo apt-get update
+        sudo apt-get upgrade
+        sudo apt-get install git build-essentials alsa-base alsa-utils
 
 1. Create a user
 
-    sudo useradd talkiepi
-    // sudo is required for installing raspi-io
-    sudo useradd -G sudo talkiepi
+        sudo useradd talkiepi
+        // sudo is required for installing raspi-io
+        sudo useradd -G sudo talkiepi
 
 2. Setup node-talkiepi
 
-    // you'll be asked to authenticate for sudo
-    //  this is required for raspi-io
-    npm install
-    // mumble config
+        // you'll be asked to authenticate for sudo
+        //  this is required for raspi-io
+        npm install
+        // mumble config
 
 3. Setup a sysmted service
 
-    sudo cp talkiepi.service /etc/systemd/system/
-    sudo systemctl enable talkiepi.service
+        sudo cp talkiepi.service /etc/systemd/system/
+        sudo systemctl enable talkiepi.service
 
