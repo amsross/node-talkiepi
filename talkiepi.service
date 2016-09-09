@@ -1,0 +1,14 @@
+[Unit]
+Description = Talkiepi
+After = systemd-user-sessions.service network.target
+
+[Service]
+User = talkiepi
+Group = talkiepi
+Type = simple
+ExecStart = /usr/local/bin/node /home/talkiepi/node-talkiepi/index.js
+Restart = on-abort
+RestartSec = 5
+
+[Install]
+WantedBy = multi-user.target
