@@ -5,10 +5,11 @@
   "main": "index.js",
   "dependencies": {
     "highland": "^3.0.0-beta.3",
+    "johnny-five": "^0.10.0",
     "lodash": "^4.15.0",
     "mic": "^2.1.1",
     "mumble": "^0.3.10",
-    "onoff": "^1.1.1",
+    "raspi-io": "^6.1.0",
     "speaker": "^0.3.0"
   },
   "devDependencies": {

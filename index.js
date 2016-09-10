@@ -6,9 +6,13 @@ const h = require("highland");
 const mumble = require("mumble");
 const mic = require("mic");
 const Speaker = require("speaker");
-const Gpio = require("onoff").Gpio;
-const ledTransmit = new Gpio(17, "out");
-const ledReceive = new Gpio(18, "out");
+const raspi = require("raspi-io");
+const five = require("johnny-five");
+const board = new five.Board({
+    io: new raspi()
+});
+const ledTransmit = {};
+const ledReceive = {};
 
 const micInstance = mic({ "rate": "44100", "channels": "1", "debug": false });
 const micInputStream = micInstance.getAudioStream();
