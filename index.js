@@ -6,9 +6,14 @@ const h = require("highland");
 const mumble = require("mumble");
 const mic = require("mic");
 const Speaker = require("speaker");
-const Gpio = require("onoff").Gpio;
-const ledTransmit = new Gpio(17, "out");
-const ledReceive = new Gpio(18, "out");
+const Button = require("./Button");
+const LED = require("./LED");
+
+const buttonSPST = new Button({
+  pin: 7,
+});
+const ledTransmit = new LED(0);
+const ledReceive = new LED(1);
 
 const micInstance = mic({ "rate": "44100", "channels": "1", "debug": false });
 const micInputStream = micInstance.getAudioStream();
@@ -21,49 +26,47 @@ var micInstanceStatus;
 micInputStream.on("startComplete", () => {
   h.log("starting capture");
   micInstanceStatus = true;
-  ledTransmit.writeSync(1);
+  ledTransmit.on();
 });
 micInputStream.on("stopComplete", () => {
   h.log("stopping capture");
   micInstanceStatus = false;
-  ledTransmit.writeSync(0);
+  ledTransmit.off();
 });
 micInputStream.on("resumeComplete", () => {
   h.log("resuming capture");
   micInstanceStatus = true;
-  ledTransmit.writeSync(1);
+  ledTransmit.on();
 });
 micInputStream.on("pauseComplete", () => {
   h.log("pausing capture");
   micInstanceStatus = false;
-  ledTransmit.writeSync(0);
+  ledTransmit.off();
 });
 
 // attempt to connect to mumble
 mumble.connect( process.env.MUMBLE_URL || "localhost", (err, client) => {
   if (err) throw new Error( err );
 
-  client.authenticate("mp3-" + (Date.now() % 10));
-  client.on( "initialized", () => {
-    start( client );
+  // cleanup on exit
+  process.on("SIGUSR2", () => {
+    client.disconnect();
   });
+  process.on("SIGINT", () => {
+    client.disconnect();
+  });
+
+  client.authenticate("mp3-" + (Date.now() % 10));
+  client.on("initialized", start.bind(null, client));
 });
 
 function start(client) {
 
-  client.on("voice-start", voice => {
-    h.log(voice);
-    ledReceive.writeSync(1);
-  });
+  client.on("voice-start", ledReceive.on.bind(ledReceive));
+  client.on("voice-end", ledReceive.off.bind(ledReceive));
 
-  client.on("voice-end", voice => {
-    h.log(voice);
-    ledReceive.writeSync(0);
-  });
 
-  var voices = {};
-
-  let speaker = new Speaker({
+  const speaker = new Speaker({
     channels: 1,
     bitDepth: 16,
     sampleRate: 44100,
@@ -82,14 +85,6 @@ function start(client) {
 
   // start recording
   micInstance.start();
+  // paue recording
+  micInstance.pause();
 }
-
-
-process.on("SIGUSR2", function () {
-  ledReceive.unexport();
-  ledTransmit.unexport();
-});
-process.on("SIGINT", function () {
-  ledReceive.unexport();
-  ledTransmit.unexport();
-});
