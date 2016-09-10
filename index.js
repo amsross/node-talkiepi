@@ -1,8 +1,16 @@
+"use strict";
+
+const stream = require("stream");
 const _ = require("lodash");
 const h = require("highland");
 const mumble = require("mumble");
 const mic = require("mic");
-const micInstance = mic({ "rate": "16000", "channels": "1", "debug": false, "exitOnSilence": 6 });
+const Speaker = require("speaker");
+const Gpio = require("onoff").Gpio;
+const ledTransmit = new Gpio(17, "out");
+const ledReceive = new Gpio(18, "out");
+
+const micInstance = mic({ "rate": "44100", "channels": "1", "debug": false });
 const micInputStream = micInstance.getAudioStream();
 
 // Is the mic recording?
@@ -10,9 +18,30 @@ const micInputStream = micInstance.getAudioStream();
 //  false = no
 var micInstanceStatus;
 
+micInputStream.on("startComplete", () => {
+  h.log("starting capture");
+  micInstanceStatus = true;
+  ledTransmit.writeSync(1);
+});
+micInputStream.on("stopComplete", () => {
+  h.log("stopping capture");
+  micInstanceStatus = false;
+  ledTransmit.writeSync(0);
+});
+micInputStream.on("resumeComplete", () => {
+  h.log("resuming capture");
+  micInstanceStatus = true;
+  ledTransmit.writeSync(1);
+});
+micInputStream.on("pauseComplete", () => {
+  h.log("pausing capture");
+  micInstanceStatus = false;
+  ledTransmit.writeSync(0);
+});
+
 // attempt to connect to mumble
-mumble.connect( process.env.MUMBLE_URL, (err, client) => {
-  if (err) throw new Error( error );
+mumble.connect( process.env.MUMBLE_URL || "localhost", (err, client) => {
+  if (err) throw new Error( err );
 
   client.authenticate("mp3-" + (Date.now() % 10));
   client.on( "initialized", () => {
@@ -20,40 +49,47 @@ mumble.connect( process.env.MUMBLE_URL, (err, client) => {
   });
 });
 
-// log some events
-micInputStream.on("startComplete", h.log.bind(h,"start"))
-micInputStream.on("stopComplete", h.log.bind(h,"stop"))
-micInputStream.on("pauseComplete", h.log.bind(h,"pause"))
-micInputStream.on("resumeComplete", h.log.bind(h,"resume"))
-micInputStream.on("error", h.log.bind(h,"error"))
-
 function start(client) {
+
+  client.on("voice-start", voice => {
+    h.log(voice);
+    ledReceive.writeSync(1);
+  });
+
+  client.on("voice-end", voice => {
+    h.log(voice);
+    ledReceive.writeSync(0);
+  });
+
+  var voices = {};
+
+  let speaker = new Speaker({
+    channels: 1,
+    bitDepth: 16,
+    sampleRate: 44100,
+  });
+  speaker.on("error", h.log.bind(h, "error"));
+  client.outputStream().pipe( speaker );
 
   // the mumble client to send audio to
   const input = client.inputStream({
     channels: 1,
-    sampleRate: 16000,
-    gain: 0.25
+    sampleRate: 44100,
   });
-
-  // start and then pause recording
-  micInstance.start();
-  micInstance.pause();
 
   // send any mic input to mumble
   micInputStream.pipe(input);
+
+  // start recording
+  micInstance.start();
 }
 
-// if a key is pressed, turn the mic on or off
-return h(process.stdin)
-  .each( line => {
-    if (!micInstanceStatus) {
-      h.log("starting capture");
-      micInstance.resume();
-    }
-    if (micInstanceStatus) {
-      h.log("stopping capture");
-      micInstance.pause();
-    }
-    micInstanceStatus = !micInstanceStatus;
-  })
+
+process.on("SIGUSR2", function () {
+  ledReceive.unexport();
+  ledTransmit.unexport();
+});
+process.on("SIGINT", function () {
+  ledReceive.unexport();
+  ledTransmit.unexport();
+});
