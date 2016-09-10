@@ -9,7 +9,8 @@
     "mic": "^2.1.1",
     "mumble": "^0.3.10",
     "onoff": "^1.1.1",
-    "speaker": "^0.3.0"
+    "speaker": "^0.3.0",
+    "wiring-pi": "^2.1.1"
   },
   "devDependencies": {
     "mocha": "^3.0.2",
