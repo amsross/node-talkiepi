@@ -6,8 +6,8 @@ const h = require("highland");
 const mumble = require("mumble");
 const mic = require("mic");
 const Speaker = require("speaker");
-const Button = require("./Button");
-const LED = require("./LED");
+const Button = require("./lib/Button");
+const LED = require("./lib/LED");
 
 const buttonSPST = new Button({
   pin: 7,
