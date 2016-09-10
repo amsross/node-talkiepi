@@ -65,6 +65,8 @@ function start(client) {
   client.on("voice-start", ledReceive.on.bind(ledReceive));
   client.on("voice-end", ledReceive.off.bind(ledReceive));
 
+  buttonSPST.on("down", micInstance.resume.bind(micInstance));
+  buttonSPST.on("up", micInstance.pause.bind(micInstance));
 
   const speaker = new Speaker({
     channels: 1,
