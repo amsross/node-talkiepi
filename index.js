@@ -8,6 +8,7 @@ const mic = require("mic");
 const Speaker = require("speaker");
 const Button = require("./lib/Button");
 const LED = require("./lib/LED");
+const options = require("./options");
 
 const buttonSPST = new Button({
   pin: 7,
@@ -45,7 +46,7 @@ micInputStream.on("pauseComplete", () => {
 });
 
 // attempt to connect to mumble
-mumble.connect( process.env.MUMBLE_URL || "localhost", (err, client) => {
+mumble.connect( options.server || "localhost", (err, client) => {
   if (err) throw new Error( err );
 
   // cleanup on exit
@@ -56,7 +57,7 @@ mumble.connect( process.env.MUMBLE_URL || "localhost", (err, client) => {
     client.disconnect();
   });
 
-  client.authenticate("mp3-" + (Date.now() % 10));
+  client.authenticate(options.username, options.password);
   client.on("initialized", start.bind(null, client));
 });
 

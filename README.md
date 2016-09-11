@@ -15,25 +15,19 @@
         sudo apt-get upgrade
         sudo apt-get install git alsa-base alsa-utils libasound2-dev
 
-1. Create a user
-
-        sudo useradd talkiepi
-        // sudo is required for installing raspi-io
-        adduser --disabled-password --disabled-login --gecos "" --shel /bin/bash talkiepi
-        usermod -a -G cdrom,audio,video,plugdev,users,dialout,dip,input,gpio talkiepi
-        sudo su - talkiepi
-
 2. Setup node-talkiepi
 
         git clone https://github.com/amsross/node-talkiepi.git /home/talkiepi/
-        cd /home/talkiepi
+        cd /home/pi
         // you'll be asked to authenticate for sudo
         //  this is required for raspi-io
-        npm install
-        // mumble config
+        sudo npm install
 
 3. Setup a sysmted service
 
         sudo cp talkiepi.service /etc/systemd/system/
+        // add --server, --username, and --password (if necessary)
+        //  arguments to ExecStart command
+        sudo vi /etc/systemd/system/talkiepi.service
         sudo systemctl enable talkiepi.service
 
