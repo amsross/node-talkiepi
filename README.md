@@ -13,13 +13,14 @@
 
         sudo apt-get update
         sudo apt-get upgrade
-        sudo apt-get install git build-essentials alsa-base alsa-utils libasound2-dev
+        sudo apt-get install git alsa-base alsa-utils libasound2-dev
 
 1. Create a user
 
         sudo useradd talkiepi
         // sudo is required for installing raspi-io
-        sudo useradd -G audio,sudo -m -s /bin/bash talkiepi
+        adduser --disabled-password --disabled-login --gecos "" --shel /bin/bash talkiepi
+        usermod -a -G cdrom,audio,video,plugdev,users,dialout,dip,input,gpio talkiepi
         sudo su - talkiepi
 
 2. Setup node-talkiepi
