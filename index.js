@@ -10,6 +10,15 @@ const Button = require("./lib/Button");
 const LED = require("./lib/LED");
 const options = require("./options");
 
+function say(phrase) {
+  let lame = require("lame");
+  let tts = require("simple-tts");
+  let encoder = new lame.Decoder();
+  let speaker = new Speaker();
+  encoder.pipe(speaker);
+  tts(phrase, {format:"mp3", stream:encoder});
+}
+
 const buttonSPST = new Button({
   pin: 7,
 });
@@ -90,4 +99,6 @@ function start(client) {
   micInstance.start();
   // paue recording
   micInstance.pause();
+
+  say("Ready!");
 }

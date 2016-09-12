@@ -13,7 +13,8 @@
 
         sudo apt-get update
         sudo apt-get upgrade
-        sudo apt-get install git alsa-base alsa-utils libasound2-dev
+        sudo apt-get install git alsa-base alsa-utils libasound2-dev espeak libespeak-dev
+        sudo ln -s /usr/lib/arm-linux-gnueabihf/espeak-data/ /usr/share/espeak-data
 
 2. Setup node-talkiepi
 
