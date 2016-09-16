@@ -29,6 +29,20 @@ const buttonSPST = new Button({
 const ledTransmit = new LED(2);
 const ledReceive = new LED(3);
 
+const ledChannel1 = new LED(21);
+const ledChannel2 = new LED(22);
+const ledChannel3 = new LED(23);
+const ledChannel4 = new LED(24);
+const ledChannel5 = new LED(25);
+
+const ledChannels = [
+  ledChannel1,
+  ledChannel2,
+  ledChannel3,
+  ledChannel4,
+  ledChannel5,
+];
+
 const micInstance = mic({ "rate": "44100", "channels": "1", "debug": false });
 const micInputStream = micInstance.getAudioStream();
 
