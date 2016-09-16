@@ -1,4 +1,5 @@
 "use strict";
+process.setMaxListeners(0);
 
 const stream = require("stream");
 const _ = require("lodash");
@@ -6,9 +7,11 @@ const h = require("highland");
 const mumble = require("mumble");
 const mic = require("mic");
 const Speaker = require("speaker");
+const SPI = require("./lib/SPI");
 const Button = require("./lib/Button");
 const LED = require("./lib/LED");
 const options = require("./options");
+const interval = 500;
 
 function say(phrase) {
   let lame = require("lame");
@@ -21,9 +24,10 @@ function say(phrase) {
 
 const buttonSPST = new Button({
   pin: 7,
+  interval: interval,
 });
-const ledTransmit = new LED(0);
-const ledReceive = new LED(1);
+const ledTransmit = new LED(2);
+const ledReceive = new LED(3);
 
 const micInstance = mic({ "rate": "44100", "channels": "1", "debug": false });
 const micInputStream = micInstance.getAudioStream();
@@ -77,6 +81,23 @@ function start(client) {
 
   buttonSPST.on("down", micInstance.resume.bind(micInstance));
   buttonSPST.on("up", micInstance.pause.bind(micInstance));
+
+  const spiChannel = new SPI({
+    channel: 0,
+    interval: interval,
+  });
+
+  spiChannel.on("change", value => {
+    h.log("change %s", value);
+
+    const width = Math.ceil(1024 / ledChannels.length);
+    const led = Math.floor(value / width);
+
+    _.each(ledChannels, ledChannel => {
+      ledChannel.off();
+    });
+    ledChannels[led].on();
+  });
 
   const speaker = new Speaker({
     channels: 1,
