@@ -21,27 +21,6 @@ function say(phrase) {
   tts(phrase, {format:"mp3", stream:encoder});
 }
 
-const buttonSPST = new Button({
-  pin: 7,
-  interval: interval,
-});
-const ledTransmit = new LED(2);
-const ledReceive = new LED(3);
-
-const ledChannel1 = new LED(21);
-const ledChannel2 = new LED(22);
-const ledChannel3 = new LED(23);
-const ledChannel4 = new LED(24);
-const ledChannel5 = new LED(25);
-
-const ledChannels = [
-  ledChannel1,
-  ledChannel2,
-  ledChannel3,
-  ledChannel4,
-  ledChannel5,
-];
-
 const micInstance = mic({ "rate": "44100", "channels": "1", "debug": false });
 const micInputStream = micInstance.getAudioStream();
 
@@ -80,16 +59,38 @@ mumble.connect( options.server || "localhost", (err, client) => {
 
 function start(client) {
 
+  const spiChannel = new SPI({
+    channel: 0,
+    interval: interval,
+  });
+
+  const buttonSPST = new Button({
+    pin: 7,
+    interval: interval,
+  });
+
+  const ledTransmit = new LED(2);
+  const ledReceive = new LED(3);
+
+  const ledChannel1 = new LED(21);
+  const ledChannel2 = new LED(22);
+  const ledChannel3 = new LED(23);
+  const ledChannel4 = new LED(24);
+  const ledChannel5 = new LED(25);
+
+  const ledChannels = [
+    ledChannel1,
+    ledChannel2,
+    ledChannel3,
+    ledChannel4,
+    ledChannel5,
+  ];
+
   client.on("voice-start", ledReceive.on.bind(ledReceive));
   client.on("voice-end", ledReceive.off.bind(ledReceive));
 
   buttonSPST.on("down", micInstance.resume.bind(micInstance));
   buttonSPST.on("up", micInstance.pause.bind(micInstance));
-
-  const spiChannel = new SPI({
-    channel: 0,
-    interval: interval,
-  });
 
   spiChannel.on("change", value => {
 
