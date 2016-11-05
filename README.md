@@ -3,9 +3,7 @@
 
 ## dependencies
 * a [raspberry pi](https://www.raspberrypi.org/) - for all the things
-* [node-mumble](https://github.com/Rantanen/node-mumble) - for mumble interactions
-* [mic](https://github.com/ashishbajaj99/mic) - for mic input
-* [johnny-five](https://github.com/rwaldron/johnny-five) - for raspberry pi GPIO control
+* a [mumble server](https://wiki.mumble.info/wiki/Main_Page) - for voice
 
 ## setup
 
@@ -31,4 +29,5 @@
         //  arguments to ExecStart command
         sudo vi /etc/systemd/system/talkiepi.service
         sudo systemctl enable talkiepi.service
+        sudo systemctl start talkiepi.service
 
