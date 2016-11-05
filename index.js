@@ -46,29 +46,20 @@ const ledChannels = [
 const micInstance = mic({ "rate": "44100", "channels": "1", "debug": false });
 const micInputStream = micInstance.getAudioStream();
 
-// Is the mic recording?
-//  true = yes
-//  false = no
-var micInstanceStatus;
-
 micInputStream.on("startComplete", () => {
   h.log("starting capture");
-  micInstanceStatus = true;
   ledTransmit.on();
 });
 micInputStream.on("stopComplete", () => {
   h.log("stopping capture");
-  micInstanceStatus = false;
   ledTransmit.off();
 });
 micInputStream.on("resumeComplete", () => {
   h.log("resuming capture");
-  micInstanceStatus = true;
   ledTransmit.on();
 });
 micInputStream.on("pauseComplete", () => {
   h.log("pausing capture");
-  micInstanceStatus = false;
   ledTransmit.off();
 });
 
