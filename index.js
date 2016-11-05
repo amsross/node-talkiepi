@@ -17,8 +17,7 @@ function say(phrase) {
   let lame = require("lame");
   let tts = require("simple-tts");
   let encoder = new lame.Decoder();
-  let speaker = new Speaker();
-  encoder.pipe(speaker);
+  encoder.pipe(new Speaker());
   tts(phrase, {format:"mp3", stream:encoder});
 }
 
@@ -93,14 +92,15 @@ function start(client) {
   });
 
   spiChannel.on("change", value => {
-    h.log("change %s", value);
 
+    // how many values constitute a single LED
     const width = Math.ceil(1024 / ledChannels.length);
+    // which LED is current selected
     const led = Math.floor(value / width);
 
-    _.each(ledChannels, ledChannel => {
-      ledChannel.off();
-    });
+    // turn off all of the channel LEDs
+    _.invoke(ledChannels, "off");
+    // turn the selected LED on
     ledChannels[led].on();
   });
 
@@ -109,7 +109,7 @@ function start(client) {
     bitDepth: 16,
     sampleRate: 44100,
   });
-  speaker.on("error", h.log.bind(h, "error"));
+  speaker.on("error", h.log.bind(h, "speaker error:"));
   client.outputStream().pipe( speaker );
 
   // the mumble client to send audio to
