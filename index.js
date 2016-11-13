@@ -60,7 +60,9 @@ function start(client) {
     // start recording
     micInstance.start();
   });
-  talkiePi.on("up", micInstance.pause.bind(micInstance));
+  talkiePi.on("up", e => {
+    if (micInstance) micInstance.pause.bind(micInstance);
+  });
 
   talkiePi.spiChannel.on("change", value => {
 
