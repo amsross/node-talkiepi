@@ -40,7 +40,7 @@ mumble.connect( options.server || "localhost", (err, client) => {
 
 function start(client) {
 
-  const talkiePi = new TalkiePi(client);
+  const talkiePi = new TalkiePi({client: client});
 
   // talkiePi.on("down", micInstance.resume.bind(micInstance));
   talkiePi.on("down", () => {
