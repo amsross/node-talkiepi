@@ -7,6 +7,7 @@ const h = require("highland");
 const mumble = require("mumble");
 const mic = require("mic");
 const Speaker = require("speaker");
+const TalkiePi = require("./lib/TalkiePi");
 const SPI = require("./lib/SPI");
 const Button = require("./lib/Button");
 const LED = require("./lib/LED");
@@ -20,26 +21,6 @@ function say(phrase) {
   encoder.pipe(new Speaker());
   tts(phrase, {format:"mp3", stream:encoder});
 }
-
-const micInstance = mic({ "rate": "44100", "channels": "1", "debug": false });
-const micInputStream = micInstance.getAudioStream();
-
-micInputStream.on("startComplete", () => {
-  h.log("starting capture");
-  ledTransmit.on();
-});
-micInputStream.on("stopComplete", () => {
-  h.log("stopping capture");
-  ledTransmit.off();
-});
-micInputStream.on("resumeComplete", () => {
-  h.log("resuming capture");
-  ledTransmit.on();
-});
-micInputStream.on("pauseComplete", () => {
-  h.log("pausing capture");
-  ledTransmit.off();
-});
 
 // attempt to connect to mumble
 mumble.connect( options.server || "localhost", (err, client) => {
@@ -59,73 +40,49 @@ mumble.connect( options.server || "localhost", (err, client) => {
 
 function start(client) {
 
-  const spiChannel = new SPI({
-    channel: 0,
-    interval: interval,
+  const talkiePi = new TalkiePi(client);
+
+  // talkiePi.on("down", micInstance.resume.bind(micInstance));
+  talkiePi.on("down", () => {
+    const micInstance = mic({ "rate": "44100", "channels": "1", "debug": false });
+    const micInputStream = micInstance.getAudioStream();
+
+    // send any mic input to mumble
+    micInputStream.pipe(client.inputStream({
+      channels: 1,
+      sampleRate: 44100,
+    }));
+
+    micInputStream.on("startComplete", talkiePi.transmitStart.bind(talkiePi));
+    micInputStream.on("stopComplete", talkiePi.transmitStop.bind(talkiePi));
+
+    // start recording
+    micInstance.start();
   });
+  talkiePi.on("up", micInstance.pause.bind(micInstance));
 
-  const buttonSPST = new Button({
-    pin: 7,
-    interval: interval,
-  });
-
-  const ledTransmit = new LED(2);
-  const ledReceive = new LED(3);
-
-  const ledChannel1 = new LED(21);
-  const ledChannel2 = new LED(22);
-  const ledChannel3 = new LED(23);
-  const ledChannel4 = new LED(24);
-  const ledChannel5 = new LED(25);
-
-  const ledChannels = [
-    ledChannel1,
-    ledChannel2,
-    ledChannel3,
-    ledChannel4,
-    ledChannel5,
-  ];
-
-  client.on("voice-start", ledReceive.on.bind(ledReceive));
-  client.on("voice-end", ledReceive.off.bind(ledReceive));
-
-  buttonSPST.on("down", micInstance.resume.bind(micInstance));
-  buttonSPST.on("up", micInstance.pause.bind(micInstance));
-
-  spiChannel.on("change", value => {
+  talkiePi.spiChannel.on("change", value => {
 
     // how many values constitute a single LED
-    const width = Math.ceil(1024 / ledChannels.length);
+    const width = Math.ceil(1024 / talkiePi.ledChannels.length);
     // which LED is current selected
     const led = Math.floor(value / width);
 
     // turn off all of the channel LEDs
-    _.invoke(ledChannels, "off");
+    _.invoke(talkiePi.ledChannels, "off");
     // turn the selected LED on
-    ledChannels[led].on();
+    talkiePi.ledChannels[led].on();
   });
 
+  // create a speaker to send audio to
   const speaker = new Speaker({
     channels: 1,
     bitDepth: 16,
     sampleRate: 44100,
   });
   speaker.on("error", h.log.bind(h, "speaker error:"));
+  // pipe mumble audio directly to the speaker
   client.outputStream().pipe( speaker );
-
-  // the mumble client to send audio to
-  const input = client.inputStream({
-    channels: 1,
-    sampleRate: 44100,
-  });
-
-  // send any mic input to mumble
-  micInputStream.pipe(input);
-
-  // start recording
-  micInstance.start();
-  // paue recording
-  micInstance.pause();
 
   say("Ready!");
 }
