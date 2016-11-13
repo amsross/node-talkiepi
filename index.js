@@ -8,7 +8,7 @@ const mumble = require("mumble");
 const mic = require("mic");
 const Speaker = require("speaker");
 const TalkiePi = require("./lib/TalkiePi");
-const SPI = require("./lib/SPI");
+// const SPI = require("./lib/SPI");
 const Button = require("./lib/Button");
 const LED = require("./lib/LED");
 const options = require("./options");
@@ -64,18 +64,18 @@ function start(client) {
     if (micInstance) micInstance.pause.bind(micInstance);
   });
 
-  talkiePi.spiChannel.on("change", value => {
+  // talkiePi.spiChannel.on("change", value => {
 
-    // how many values constitute a single LED
-    const width = Math.ceil(1024 / talkiePi.ledChannels.length);
-    // which LED is current selected
-    const led = Math.floor(value / width);
+  //   // how many values constitute a single LED
+  //   const width = Math.ceil(1024 / talkiePi.ledChannels.length);
+  //   // which LED is current selected
+  //   const led = Math.floor(value / width);
 
-    // turn off all of the channel LEDs
-    _.invoke(talkiePi.ledChannels, "off");
-    // turn the selected LED on
-    talkiePi.ledChannels[led].on();
-  });
+  //   // turn off all of the channel LEDs
+  //   _.invoke(talkiePi.ledChannels, "off");
+  //   // turn the selected LED on
+  //   talkiePi.ledChannels[led].on();
+  // });
 
   // create a speaker to send audio to
   const speaker = new Speaker({
