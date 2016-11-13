@@ -41,10 +41,11 @@ mumble.connect( options.server || "localhost", (err, client) => {
 function start(client) {
 
   const talkiePi = new TalkiePi({client: client});
+  let micInstance;
 
   // talkiePi.on("down", micInstance.resume.bind(micInstance));
   talkiePi.on("down", () => {
-    const micInstance = mic({ "rate": "44100", "channels": "1", "debug": false });
+    micInstance = mic({ "rate": "44100", "channels": "1", "debug": false });
     const micInputStream = micInstance.getAudioStream();
 
     // send any mic input to mumble
