@@ -26,14 +26,6 @@ function say(phrase) {
 mumble.connect( options.server || "localhost", (err, client) => {
   if (err) throw new Error( err );
 
-  // cleanup on exit
-  process.on("SIGUSR2", () => {
-    client.disconnect();
-  });
-  process.on("SIGINT", () => {
-    client.disconnect();
-  });
-
   client.authenticate(options.username, options.password);
   client.on("initialized", start.bind(null, client));
 });
@@ -41,28 +33,6 @@ mumble.connect( options.server || "localhost", (err, client) => {
 function start(client) {
 
   const talkiePi = new TalkiePi({client: client});
-  let micInstance;
-
-  // talkiePi.on("down", micInstance.resume.bind(micInstance));
-  talkiePi.on("down", () => {
-    micInstance = mic({ "rate": "44100", "channels": "1", "debug": false });
-    const micInputStream = micInstance.getAudioStream();
-
-    // send any mic input to mumble
-    micInputStream.pipe(client.inputStream({
-      channels: 1,
-      sampleRate: 44100,
-    }));
-
-    micInputStream.on("startComplete", talkiePi.transmitStart.bind(talkiePi));
-    micInputStream.on("stopComplete", talkiePi.transmitStop.bind(talkiePi));
-
-    // start recording
-    micInstance.start();
-  });
-  talkiePi.on("up", e => {
-    if (micInstance) micInstance.pause.bind(micInstance);
-  });
 
   // talkiePi.spiChannel.on("change", value => {
 
@@ -85,7 +55,7 @@ function start(client) {
   });
   speaker.on("error", h.log.bind(h, "speaker error:"));
   // pipe mumble audio directly to the speaker
-  client.outputStream().pipe( speaker );
+  client.outputStream().pipe(speaker);
 
   say("Ready!");
 }
