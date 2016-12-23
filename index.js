@@ -1,11 +1,9 @@
 "use strict";
 process.setMaxListeners(0);
 
-const stream = require("stream");
 const _ = require("lodash");
 const h = require("highland");
 const mumble = require("mumble");
-const mic = require("mic");
 const Speaker = require("speaker");
 const TalkiePi = require("./lib/TalkiePi");
 // const SPI = require("./lib/SPI");
