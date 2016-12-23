@@ -1,7 +1,6 @@
 "use strict";
 process.setMaxListeners(0);
 
-const _ = require("lodash");
 const h = require("highland");
 const mumble = require("mumble");
 const Speaker = require("speaker");
@@ -32,17 +31,17 @@ function start(client) {
 
   const talkiePi = new TalkiePi({client: client});
 
-  // talkiePi.spiChannel.on("change", value => {
+  // this.talkiePi.spiChannel.on("change", value => {
 
   //   // how many values constitute a single LED
-  //   const width = Math.ceil(1024 / talkiePi.ledChannels.length);
+  //   const width = Math.ceil(1024 / this.talkiePi.ledChannels.length);
   //   // which LED is current selected
   //   const led = Math.floor(value / width);
 
   //   // turn off all of the channel LEDs
-  //   _.invoke(talkiePi.ledChannels, "off");
+  //   r.map(r.invoker(0, "off"), this.talkiePi.ledChannels);
   //   // turn the selected LED on
-  //   talkiePi.ledChannels[led].on();
+  //   this.talkiePi.ledChannels[led].on();
   // });
 
   // create a speaker to send audio to
