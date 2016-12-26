@@ -4,7 +4,7 @@ After = systemd-user-sessions.service network.target
 
 [Service]
 Type = simple
-ExecStart = /usr/local/bin/node /home/pi/node-talkiepi/index.js > /var/log/talkiepi.log 2>&1
+ExecStart = /usr/local/bin/node /home/pi/node-talkiepi/index.js
 Restart = on-failure
 RestartSec = 10
 
