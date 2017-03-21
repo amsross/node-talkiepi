@@ -1,7 +1,14 @@
 {
   "name": "node-talkiepi",
   "version": "1.0.0",
-  "description": "node-base mumble client for a rasbperry pi",
+  "description": "node-based mumble client for a rasbperry pi",
+  "keywords": [
+    "raspberry pi",
+    "mumble",
+    "mic",
+    "speaker",
+    "intercom"
+  ],
   "main": "index.js",
   "dependencies": {
     "highland": "^3.0.0-beta.3",
@@ -15,12 +22,18 @@
     "speaker": "^0.3.0"
   },
   "devDependencies": {
+    "eslint": "^3.18.0",
+    "eslint-config-standard": "^7.1.0",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^2.1.1",
     "mocha": "^3.0.2",
     "mocha-clean": "^1.0.0"
   },
   "scripts": {
     "start": "node index.js",
-    "test": "mocha test/index.js"
+    "test": "npm run test:lint && npm run test:mocha",
+    "test:mocha": "mocha test/index.js --require mocha-clean",
+    "test:lint": "eslint index.js test/index.js"
   },
   "author": "Matt Ross <amsross@gmail.com>",
   "license": "ISC"

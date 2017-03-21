@@ -1,3 +1,4 @@
+/* global describe */
 
-describe( "node-talkiepi", function() {
+describe('node-talkiepi', function () {
 });
