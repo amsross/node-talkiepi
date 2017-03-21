@@ -12,7 +12,7 @@ const options = require("./options");
 const interval = 500;
 
 function say(phrase) {
-  h.log("talkiepi: say:", phrase);
+  console.log(`talkiepi: say: ${phrase}`);
 }
 
 // attempt to connect to mumble
@@ -26,6 +26,7 @@ mumble.connect( options.server || "localhost", (err, client) => {
 function start(client) {
 
   const talkiePi = new TalkiePi({client: client});
+  talkiePi.on("say", say);
 
   // this.talkiePi.spiChannel.on("change", value => {
 
@@ -46,7 +47,7 @@ function start(client) {
     bitDepth: 16,
     sampleRate: 44100,
   });
-  speaker.on("error", h.log.bind(h, "speaker error:"));
+  speaker.on("error", err => say(`speaker error: ${err}`));
   // pipe mumble audio directly to the speaker
   client.outputStream().pipe(speaker);
 
