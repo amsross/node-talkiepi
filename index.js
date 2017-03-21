@@ -13,11 +13,6 @@ const interval = 500;
 
 function say(phrase) {
   h.log("talkiepi: say:", phrase);
-  // let lame = require("lame");
-  // let tts = require("simple-tts");
-  // let encoder = new lame.Decoder();
-  // encoder.pipe(new Speaker());
-  // tts(phrase, {format:"mp3", stream:encoder});
 }
 
 // attempt to connect to mumble
