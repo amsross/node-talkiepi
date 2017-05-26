@@ -1,6 +1,7 @@
 [Unit]
 Description = Talkiepi
-After = systemd-user-sessions.service network.target
+Wants = network-online.target
+After = systemd-user-sessions.service network.target network-online.target
 
 [Service]
 Type = simple
