@@ -19,7 +19,7 @@
     "nopt": "^3.0.6",
     "ramda": "^0.22.1",
     "speaker": "^0.3.0",
-    "wiring-pi": "^2.1.1"
+    "wiringpi-node": "^2.4.4"
   },
   "devDependencies": {
     "eslint": "^3.18.0",
