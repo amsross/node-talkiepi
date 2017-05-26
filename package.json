@@ -17,9 +17,9 @@
     "mic": "^2.1.1",
     "mumble": "^0.3.10",
     "nopt": "^3.0.6",
-    "onoff": "^1.1.2",
     "ramda": "^0.22.1",
-    "speaker": "^0.3.0"
+    "speaker": "^0.3.0",
+    "wiring-pi": "^2.1.1"
   },
   "devDependencies": {
     "eslint": "^3.18.0",
