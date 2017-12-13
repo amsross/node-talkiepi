@@ -22,7 +22,7 @@
         //  this is required for raspi-io
         sudo npm install
 
-3. Setup a sysmted service
+3. Setup a systemd service
 
         sudo cp talkiepi.service /etc/systemd/system/
         // add --server, --username, and --password (if necessary)
