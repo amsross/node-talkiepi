@@ -19,7 +19,8 @@
     "nopt": "^3.0.6",
     "ramda": "^0.22.1",
     "speaker": "^0.3.0",
-    "wiringpi-node": "^2.4.4"
+    "wiringpi-node": "^2.4.4",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "eslint": "^3.18.0",
@@ -35,8 +36,11 @@
     "start": "node index.js",
     "test": "npm run test:lint && npm run test:mocha",
     "test:mocha": "mocha test/index.js --require mocha-clean",
-    "test:lint": "eslint index.js test/index.js"
+    "test:lint": "eslint index.js test/index.js",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "author": "Matt Ross <amsross@gmail.com>",
-  "license": "ISC"
+  "license": "ISC",
+  "snyk": true
 }
